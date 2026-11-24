@@ -1,5 +1,5 @@
 // Command iban is the Runnel plugin "iban": it checks IBANs and BICs and builds IBANs from
-// the national account number. Runnel starts it; see README.md.
+// the national account number; iban.validate is also a transform for pipelines. Runnel starts it; see README.md.
 package main
 
 import (
@@ -82,6 +82,16 @@ func newPlugin() *runnel.Plugin {
 			}
 			return outputOf(i), nil
 		},
+	})
+	runnel.AddTransform(p, runnel.Transform[validateFieldConfig]{
+		Type:         "iban.validate",
+		Label:        "Validate IBANs",
+		Description:  "Checks the IBAN in a field of every record; invalid ones go to the error link or a target",
+		Example:      "type: iban.validate\nwith:\n  field: iban\n  format: print\n  bankCodeField: blz\n",
+		RecordErrors: true,
+		Parallel:     true,
+		Run:          validateRecords,
+		Init:         initValidate,
 	})
 	runnel.AddAction(p, runnel.Action[bicConfig]{
 		Type:        "iban.validate-bic",

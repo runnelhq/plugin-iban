@@ -1,14 +1,15 @@
 # plugin-iban – IBAN und BIC für Runnel
 
 Offizielles [Runnel](https://github.com/runnelhq/runnel)-Plugin: prüft IBANs und BICs und bildet IBANs aus Bankleitzahl
-und Kontonummer. Gebaut mit dem [Go-SDK](https://github.com/runnelhq/sdk-go). Es rechnet nur lokal – nichts wird
+und Kontonummer – als Actions in Workflows und als Transform in Pipelines. Gebaut mit dem [Go-SDK](https://github.com/runnelhq/sdk-go). Es rechnet nur lokal – nichts wird
 gesendet, es braucht keine Connection.
 
 | | |
 |---|---|
 | Namensraum | `iban` |
 | Actions | `iban.validate`, `iban.validate-bic`, `iban.create` |
-| Runnel | ab S49c (Actions aus Plugins) |
+| Transforms | `iban.validate` (mit Fehler-Link, `copies` möglich) |
+| Runnel | Actions ab S49c, Transform ab S50b |
 | Lizenz | MIT |
 
 ## Installieren
@@ -53,6 +54,43 @@ not 21` oder `the check digits are wrong (mistyped or swapped characters)`. Mit 
 Action mit dieser Meldung (Fehlerpfad im Workflow).
 
 Nicht geprüft werden nationale Prüfziffern der Kontonummer und ob Bank oder Konto existieren.
+
+### Transform `iban.validate` – IBANs in Datensätzen prüfen
+
+In Pipelines prüft `iban.validate` ein Feld jedes Datensatzes. Gültige IBANs gehen weiter – auf Wunsch in einheitlicher
+Schreibweise und mit Land, Bankleitzahl und Filiale als neuen Feldern; ungültige gehen auf den **Fehler-Link** (mit
+`_error` und `_errorField`) oder unverändert an ein Ziel.
+
+```yaml
+transforms:
+  - id: read
+    type: csv.input
+    with: { path: accounts.csv }
+  - id: check
+    type: iban.validate
+    with:
+      field: iban
+      format: electronic        # electronic (Standard), print (Vierergruppen) oder keep
+      countryField: country     # neue Felder, leer: keines
+      bankCodeField: blz
+      # invalid: by-hand        # ungültige an diesen Transform statt auf den Fehler-Link
+      # allowEmpty: true        # leere IBAN unverändert durchlassen
+  - id: good
+    type: csv.output
+    with: { path: good.csv }
+  - id: bad
+    type: csv.output
+    with: { path: bad.csv }     # Felder des Datensatzes plus _error, _errorField, _errorTransform
+links:
+  - { from: read, to: check }
+  - { from: check, to: good }
+  - { from: check, to: bad, type: error }
+```
+
+`runnel validate` und der Editor prüfen über `transform.init`, dass `field` im Eingang steht, die neuen Felder nicht
+schon vorhanden sind und zu `invalid` ein Daten-Link führt; die neuen Felder sind danach bekannt (z. B. für
+`fields` von `csv.output`). Ohne Fehler-Link und ohne `invalid` scheitert die Pipeline am ersten ungültigen Datensatz,
+wie bei eingebauten Transforms. Durchsatz: etwa 320.000 Datensätze/s über das Protokoll (`make bench`).
 
 ### `iban.validate-bic` – BIC prüfen
 
