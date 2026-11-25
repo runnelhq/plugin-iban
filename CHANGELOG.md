@@ -1,6 +1,10 @@
 # Änderungen
 
-## v0.2.0 (unveröffentlicht)
+## Unveröffentlicht
+
+- Release-Archive nur noch für Windows und Linux (x64), wie Runnel selbst; die Archive für ARM und macOS entfallen.
+
+## v0.2.0 (2026-11-25)
 
 - SDK `v0.2.0`: Die Bausteine stehen in Runnel (ab runnel#236) in der eigenen Gruppe „Plugin: iban“ der Palette.
 - Installationsanleitung im README; das README liegt jetzt in jedem Archiv (`plugins/iban/README.md`) und ist im

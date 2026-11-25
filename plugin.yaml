@@ -7,4 +7,3 @@ namespace: iban
 executable:
   windows: bin/iban.exe
   linux: bin/iban
-  darwin: bin/iban
