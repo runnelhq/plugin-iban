@@ -15,7 +15,8 @@ gesendet, es braucht keine Connection.
 ## Installieren
 
 1. Archiv für das System von den [Releases](https://github.com/runnelhq/plugin-iban/releases) laden
-   (`runnel-plugin-iban_<version>_windows_amd64.zip`) und die Prüfsumme mit `SHA256SUMS` vergleichen.
+   (`runnel-plugin-iban_<version>_windows_amd64.zip`) und die Prüfsumme mit `SHA256SUMS` vergleichen. Zu jedem Archiv gibt es
+   eine SBOM (`.cdx.json`, CycloneDX) mit allen eingebauten Komponenten und ihren Lizenzen.
 2. In den Ordner `plugins/` des Projekts entpacken, sodass `plugins/iban/plugin.yaml` entsteht.
 3. Freigeben und prüfen:
 
@@ -134,7 +135,8 @@ das Plugin rechnet nach dem Standardverfahren. Für solche Konten die IBAN von d
 | Lint (golangci-lint v2.15.0) | `make lint` (ohne passendes golangci-lint: `make bin/tools/golangci-lint lint GOLANGCI_LINT=bin/tools/golangci-lint`) |
 | Fuzzing | `make fuzz FUZZTIME=1m` |
 | Benchmarks | `make bench` |
-| Release-Archive | `make dist` → `dist/*.zip`, `dist/SHA256SUMS` |
+| Release-Archive | `make dist` → `dist/*.zip` mit erzeugten `THIRD_PARTY_NOTICES`, je Archiv eine SBOM (`*.cdx.json`, CycloneDX) und `dist/SHA256SUMS`; scheitert, wenn eine Abhängigkeit keine oder keine erlaubte Lizenz hat (MIT, BSD-2/3-Clause, Apache-2.0, ISC) |
+| Lizenzhinweise ansehen | `make notices` |
 | Release veröffentlichen | `version` in `plugin.yaml` und `main.go` erhöhen, mergen, dann Tag `v<version>` pushen oder den Workflow „Release“ auf `main` mit der Version starten; er prüft die Version, testet, baut die Archive mit Herkunftsnachweis und legt das GitHub-Release an |
 
 Von Hand im Projekt testen: `make build`, dann `bin/iban` mit `plugin.yaml` nach `plugins/iban/` kopieren und
