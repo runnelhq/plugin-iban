@@ -27,6 +27,18 @@ func TestDescribe(t *testing.T) {
 	}
 }
 
+// No type has a category, so that Runnel shows them in the group "Plugin: iban".
+func TestNoCategories(t *testing.T) {
+	c := runneltest.Start(t, newPlugin())
+	raw, err := c.Call("describe", map[string]any{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(raw), `"category"`) {
+		t.Errorf("describe names a category: %s", raw)
+	}
+}
+
 func TestValidate(t *testing.T) {
 	c := runneltest.Start(t, newPlugin())
 	var out ibanOutput
