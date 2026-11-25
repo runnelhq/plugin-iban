@@ -25,7 +25,7 @@ func TestValidateTransform(t *testing.T) {
 	if err != nil || res.Error != "" {
 		t.Fatal(err, res.Error)
 	}
-	main, errs := res.Records(runnel.Main), res.Records(runnel.Error)
+	main, errs := res.Records(runnel.ToMain), res.Records(runnel.ToError)
 	if len(main) != 2 || main[0]["iban"] != "DE89 3704 0044 0532 0130 00" || main[0]["country"] != "DE" || main[0]["bank"] != "37040044" || main[0]["branch"] != nil ||
 		main[1]["branch"] != "601613" {
 		t.Errorf("main = %v", main)
@@ -40,8 +40,8 @@ func TestValidateTransform(t *testing.T) {
 	if err != nil || res.Error != "" {
 		t.Fatal(err, res.Error)
 	}
-	main, routed := res.Records(runnel.Main), res.Records("check-by-hand")
-	if len(main) != 4 || main[0]["iban"] != "DE89370400440532013000" || len(routed) != 1 || routed[0]["iban"] != "DE89370400440532013001" || len(res.Records(runnel.Error)) != 0 {
+	main, routed := res.Records(runnel.ToMain), res.Records("check-by-hand")
+	if len(main) != 4 || main[0]["iban"] != "DE89370400440532013000" || len(routed) != 1 || routed[0]["iban"] != "DE89370400440532013001" || len(res.Records(runnel.ToError)) != 0 {
 		t.Errorf("main = %v, routed = %v", main, routed)
 	}
 

@@ -4,4 +4,4 @@ go 1.26.0
 
 toolchain go1.26.11
 
-require github.com/runnelhq/sdk-go v0.0.0-20261124233523-cd43f97fcb9f
+require github.com/runnelhq/sdk-go v0.1.0

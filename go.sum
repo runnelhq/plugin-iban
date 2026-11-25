@@ -1,2 +1,2 @@
-github.com/runnelhq/sdk-go v0.0.0-20261124233523-cd43f97fcb9f h1:NSYYKkQ7gWDb4Zv7jMh8HtnuCS8BHKPVoVt8FtmOR8Q=
-github.com/runnelhq/sdk-go v0.0.0-20261124233523-cd43f97fcb9f/go.mod h1:Ni+evLRnHbO1hmfm9Kd8lO/w4sxQ6Wd1EK+cCLulvuw=
+github.com/runnelhq/sdk-go v0.1.0 h1:kMgxL3ZEFBUDoGeGEqQFahOIIbX6OEmaemdSptdp4ws=
+github.com/runnelhq/sdk-go v0.1.0/go.mod h1:Ni+evLRnHbO1hmfm9Kd8lO/w4sxQ6Wd1EK+cCLulvuw=
