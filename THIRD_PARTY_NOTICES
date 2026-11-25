@@ -1,0 +1,10 @@
+Third-party software in the iban plugin
+=======================================
+
+github.com/runnelhq/sdk-go – MIT License
+Copyright (c) 2026 The Runnel authors
+(full text: LICENSE)
+
+The Go standard library – BSD 3-Clause License
+Copyright 2009 The Go Authors
+https://go.dev/LICENSE

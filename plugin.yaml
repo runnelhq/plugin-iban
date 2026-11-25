@@ -1,0 +1,10 @@
+kind: Plugin
+apiVersion: runnel/v1
+name: iban
+version: 0.1.0
+description: Checks IBANs and BICs and builds IBANs
+namespace: iban
+executable:
+  windows: bin/iban.exe
+  linux: bin/iban
+  darwin: bin/iban
