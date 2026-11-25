@@ -14,7 +14,7 @@ import (
 )
 
 // version must match version in plugin.yaml (checked by a test).
-const version = "0.1.0"
+const version = "0.2.0"
 
 type validateConfig struct {
 	IBAN          string `json:"iban" doc:"The IBAN to check; spaces, hyphens and small letters are allowed, e.g. DE89 3704 0044 0532 0130 00" schema:"required,example=DE89370400440532013000"`
