@@ -86,13 +86,13 @@ func validateRecords(ctx context.Context, s *runnel.Stream, c validateFieldConfi
 			}
 			valid = append(valid, row)
 		}
-		if err := s.Emit(ctx, runnel.Main, outputFields(b.Fields, c), valid); err != nil {
+		if err := s.Emit(ctx, runnel.ToMain, outputFields(b.Fields, c), valid); err != nil {
 			return err
 		}
 		if err := s.Emit(ctx, c.Invalid, b.Fields, invalid); err != nil {
 			return err
 		}
-		if err := s.Emit(ctx, runnel.Error, runnel.ErrorFields(b.Fields), errs); err != nil {
+		if err := s.Emit(ctx, runnel.ToError, runnel.ErrorFields(b.Fields), errs); err != nil {
 			return err
 		}
 	}
