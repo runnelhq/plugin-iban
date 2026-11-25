@@ -135,6 +135,7 @@ das Plugin rechnet nach dem Standardverfahren. Für solche Konten die IBAN von d
 | Fuzzing | `make fuzz FUZZTIME=1m` |
 | Benchmarks | `make bench` |
 | Release-Archive | `make dist` → `dist/*.zip`, `dist/SHA256SUMS` |
+| Release veröffentlichen | `version` in `plugin.yaml` und `main.go` erhöhen, mergen, dann Tag `v<version>` pushen oder den Workflow „Release“ auf `main` mit der Version starten; er prüft die Version, testet, baut die Archive mit Herkunftsnachweis und legt das GitHub-Release an |
 
 Von Hand im Projekt testen: `make build`, dann `bin/iban` mit `plugin.yaml` nach `plugins/iban/` kopieren und
 `runnel plugins trust`.
