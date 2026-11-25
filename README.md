@@ -30,18 +30,18 @@ System laden, dazu `SHA256SUMS`:
 Das Archiv eines anderen Systems hilft nicht: Die `plugin.yaml` darin nennt nur das Programm ihres Systems.
 
 ```powershell
-Get-FileHash .\runnel-plugin-iban_0.1.0_windows_amd64.zip -Algorithm SHA256
+Get-FileHash .\runnel-plugin-iban_0.2.0_windows_amd64.zip -Algorithm SHA256
 # muss mit der Zeile in SHA256SUMS übereinstimmen
 ```
 
 Wer mehr Sicherheit will, prüft zusätzlich die Herkunft mit der GitHub-CLI:
-`gh attestation verify runnel-plugin-iban_0.1.0_windows_amd64.zip --repo runnelhq/plugin-iban`. Zu jedem Archiv gibt
+`gh attestation verify runnel-plugin-iban_0.2.0_windows_amd64.zip --repo runnelhq/plugin-iban`. Zu jedem Archiv gibt
 es eine SBOM (`.cdx.json`, CycloneDX) mit allen eingebauten Komponenten und ihren Lizenzen.
 
 **2. In das Projekt entpacken,** sodass `plugins/iban/plugin.yaml` entsteht:
 
 ```powershell
-Expand-Archive .\runnel-plugin-iban_0.1.0_windows_amd64.zip -DestinationPath D:\flows\plugins
+Expand-Archive .\runnel-plugin-iban_0.2.0_windows_amd64.zip -DestinationPath D:\flows\plugins
 ```
 
 ```text
@@ -197,5 +197,5 @@ Von Hand im Projekt testen: `make build`, dann `bin/iban` mit `plugin.yaml` nach
 `runnel plugins trust`.
 
 Das IBAN-Register steht in `internal/iban/registry.go`; zu jedem Land gibt es eine Beispiel-IBAN im Test. Ändert SWIFT
-das Register, dort ergänzen. Die Version in `plugin.yaml` und `version` in `main.go` passen zum Tag (`v0.1.0`); ein
+das Register, dort ergänzen. Die Version in `plugin.yaml` und `version` in `main.go` passen zum Tag (z. B. `v0.2.0`); ein
 Test prüft das. Änderungen stehen in [CHANGELOG.md](CHANGELOG.md).
