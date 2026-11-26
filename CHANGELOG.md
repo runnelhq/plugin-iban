@@ -1,6 +1,6 @@
 # Änderungen
 
-## Unveröffentlicht (v0.3.0)
+## v0.3.0 (2026-11-26)
 
 - Referenz für alle Bausteine (SDK `v0.3.0`, Runnel ab E15b): Ergebnis von `iban.validate`, `iban.validate-bic` und
   `iban.create` mit Pfad und Typ, neue Felder des Transforms, weitergegebene Datensätze und wann sie scheitern; zu sehen
