@@ -1,5 +1,12 @@
 # Änderungen
 
+## Unveröffentlicht (v0.3.0)
+
+- Referenz für alle Bausteine (SDK `v0.3.0`, Runnel ab E15b): Ergebnis von `iban.validate`, `iban.validate-bic` und
+  `iban.create` mit Pfad und Typ, neue Felder des Transforms, weitergegebene Datensätze und wann sie scheitern; zu sehen
+  im Katalog des Projekts (`runnel serve`, `/api/v1/catalog`) und in der Hilfe des Editors. Ein Test hält die Angaben mit den Ergebnis-Structs
+  gleich.
+
 ## v0.2.1 (2026-11-26)
 
 - SDK `v0.2.1`: Anfragen mit ungültiger ID (weder ganze Zahl noch Text) beantwortet das Plugin mit `-32600` und

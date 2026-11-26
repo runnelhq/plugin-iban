@@ -14,7 +14,7 @@ import (
 )
 
 // version must match version in plugin.yaml (checked by a test).
-const version = "0.2.1"
+const version = "0.3.0"
 
 type validateConfig struct {
 	IBAN          string `json:"iban" doc:"The IBAN to check; spaces, hyphens and small letters are allowed, e.g. DE89 3704 0044 0532 0130 00" schema:"required,example=DE89370400440532013000"`
@@ -72,6 +72,12 @@ func newPlugin() *runnel.Plugin {
 		Label:       "Validate IBAN",
 		Description: "Checks an IBAN (country, length, structure and check digits) and returns its parts",
 		Example:     "type: iban.validate\nwith:\n  iban: ${IBAN}\n  failOnInvalid: true\n",
+		Reference: runnel.Reference{
+			Outputs: ibanOutputs("Whether the IBAN is valid", "The IBAN in electronic format, e.g. DE89370400440532013000; as written if invalid"),
+			Errors: "Fails only with failOnInvalid when the IBAN is invalid (unknown country, wrong length or characters, " +
+				"wrong check digits); otherwise the result has valid false and the reason in error. " +
+				"National check digits of the account number and whether bank or account exist are not checked.",
+		},
 		Run: func(_ context.Context, _ *runnel.Call, c validateConfig) (any, error) {
 			i, err := iban.Parse(c.IBAN)
 			if err != nil {
@@ -88,6 +94,7 @@ func newPlugin() *runnel.Plugin {
 		Label:        "Validate IBANs",
 		Description:  "Checks the IBAN in a field of every record; invalid ones go to the error link or a target",
 		Example:      "type: iban.validate\nwith:\n  field: iban\n  format: print\n  bankCodeField: blz\n",
+		Reference:    validateFieldReference,
 		RecordErrors: true,
 		Parallel:     true,
 		Run:          validateRecords,
@@ -98,6 +105,20 @@ func newPlugin() *runnel.Plugin {
 		Label:       "Validate BIC",
 		Description: "Checks the form of a BIC (SWIFT code) and returns its parts; whether the bank exists is not checked",
 		Example:     "type: iban.validate-bic\nwith:\n  bic: ${BIC}\n",
+		Reference: runnel.Reference{
+			Outputs: []runnel.OutputField{
+				{Name: "output.valid", Type: "boolean", Description: "Whether the BIC has a valid form"},
+				{Name: "output.bic", Type: "string", Description: "The BIC in capitals without spaces; as written if invalid"},
+				{Name: "output.bank", Type: "string", Description: "Bank code, the first 4 characters"},
+				{Name: "output.country", Type: "string", Description: "Country code (ISO 3166), characters 5 and 6"},
+				{Name: "output.location", Type: "string", Description: "Location code, characters 7 and 8"},
+				{Name: "output.branch", Type: "string", Description: "Branch code, XXX for the head office (also for a BIC of 8 characters)"},
+				{Name: "output.test", Type: "boolean", Description: "Whether it is a test BIC (second character of the location is 0)"},
+				{Name: "output.error", Type: "string", Description: "Why the BIC is invalid; empty if valid"},
+			},
+			Errors: "Fails only with failOnInvalid when the BIC is invalid (not 8 or 11 letters and digits, no country code); " +
+				"otherwise the result has valid false and the reason in error. Whether the bank exists is not checked.",
+		},
 		Run: func(_ context.Context, _ *runnel.Call, c bicConfig) (any, error) {
 			b, err := iban.ParseBIC(c.BIC)
 			if err != nil {
@@ -114,6 +135,13 @@ func newPlugin() *runnel.Plugin {
 		Label:       "Create IBAN",
 		Description: "Builds an IBAN from country and national account number (BBAN) or bank code and account number",
 		Example:     "type: iban.create\nwith:\n  country: DE\n  bankCode: \"37040044\"\n  accountNumber: \"532013000\"\n",
+		Reference: runnel.Reference{
+			Outputs: ibanOutputs("Always true", "The new IBAN in electronic format"),
+			Errors: "Fails when the country has no IBAN, when not exactly one of bban or bankCode with accountNumber is given, " +
+				"when bankCode and accountNumber are given for a country other than DE, AT, CH and LI, " +
+				"or when the bank code, the account number or the BBAN do not fit the country. " +
+				"The standard rule is used; some German banks have own IBAN rules of the Bundesbank.",
+		},
 		Run: func(_ context.Context, call *runnel.Call, c createConfig) (any, error) {
 			bban, err := bbanOf(c)
 			if err != nil {
@@ -155,6 +183,21 @@ func bbanOf(c createConfig) (string, error) {
 		return "", fmt.Errorf("the account number of %s has at most %d characters, not %d", cc, layout[1], len(account))
 	}
 	return bank + iban.PadLeft(account, layout[1]), nil
+}
+
+// ibanOutputs describes ibanOutput, the result of iban.validate and iban.create.
+func ibanOutputs(valid, ibanText string) []runnel.OutputField {
+	return []runnel.OutputField{
+		{Name: "output.valid", Type: "boolean", Description: valid},
+		{Name: "output.iban", Type: "string", Description: ibanText},
+		{Name: "output.formatted", Type: "string", Description: "The IBAN in groups of four, e.g. DE89 3704 0044 0532 0130 00"},
+		{Name: "output.country", Type: "string", Description: "Country code, e.g. DE"},
+		{Name: "output.checkDigits", Type: "string", Description: "The two check digits, e.g. 89"},
+		{Name: "output.bban", Type: "string", Description: "The national account number (BBAN)"},
+		{Name: "output.bankCode", Type: "string", Description: "Bank code, e.g. the BLZ in Germany"},
+		{Name: "output.branchCode", Type: "string", Description: "Branch code; empty where the country has none"},
+		{Name: "output.error", Type: "string", Description: "Why the IBAN is invalid; empty if valid"},
+	}
 }
 
 func outputOf(i iban.IBAN) ibanOutput {
