@@ -1,7 +1,7 @@
 kind: Plugin
 apiVersion: runnel/v1
 name: iban
-version: 0.2.0
+version: 0.2.1
 description: Checks IBANs and BICs and builds IBANs
 namespace: iban
 executable:
