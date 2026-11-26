@@ -22,6 +22,21 @@ type validateFieldConfig struct {
 	AllowEmpty      bool   `json:"allowEmpty" doc:"Pass records with an empty IBAN on unchanged instead of treating them as invalid"`
 }
 
+// validateFieldReference documents the transform iban.validate.
+var validateFieldReference = runnel.Reference{
+	Outputs: []runnel.OutputField{
+		{Name: "<field>", Type: "any", Description: "The IBAN as format says (text); unchanged with keep"},
+		{Name: "<countryField>", Type: runnel.TypeString, Description: "Country code of the IBAN, e.g. DE"},
+		{Name: "<bankCodeField>", Type: runnel.TypeString, Description: "Bank code of the IBAN, e.g. the BLZ in Germany"},
+		{Name: "<branchCodeField>", Type: runnel.TypeString, Description: "Branch code of the IBAN; null where the country has none"},
+	},
+	Records: "Passes records with a valid IBAN to the data links, with the new fields; with allowEmpty also records " +
+		"with an empty IBAN, unchanged and with null in the new fields. Records with an invalid IBAN go unchanged to the " +
+		"transform named in invalid.",
+	Errors: "Without invalid, records with an invalid IBAN (also an empty one without allowEmpty) go to the error link " +
+		"with _error and _errorField; without error link, the pipeline stops. Fails when field is not in the records.",
+}
+
 // addedFields are the new fields by path in the configuration, in their order.
 func (c validateFieldConfig) addedFields() [][2]string {
 	var out [][2]string
